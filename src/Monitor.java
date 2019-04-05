@@ -16,6 +16,7 @@ public class Monitor
 	private int numberOfPhilosophers;
 	private boolean chopstickAvailable[];
 	private boolean talking;
+	private int pepperAvailable;
 	/**
 	 * Constructor
 	 */
@@ -23,6 +24,7 @@ public class Monitor
 	{
 		numberOfPhilosophers = piNumberOfPhilosophers;
 		talking = false;
+		pepperAvailable  = 2;
 		chopstickAvailable = new boolean[piNumberOfPhilosophers];
 		for(int i = 0; i<chopstickAvailable.length ; i++)
 		{
@@ -119,6 +121,27 @@ public class Monitor
 	public synchronized void endTalk()
 	{
 		talking = false;
+		notifyAll();
+	}
+	
+	public synchronized void pickUpPepper()
+	{
+		while(pepperAvailable == 0)
+		{
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		pepperAvailable--;
+	}
+	
+	public synchronized void putDownPepper()
+	{
+		pepperAvailable++;
 		notifyAll();
 	}
 	

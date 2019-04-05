@@ -26,7 +26,11 @@ public class Philosopher extends BaseThread
 		try
 		{
 			System.out.println("Philosopher " + this.iTID + ": is eating");
+			DiningPhilosophers.soMonitor.pickUpPepper();
+			System.out.println("Philosopher " + this.iTID + ": picked up pepper");
 			sleep((long)(Math.random() * TIME_TO_WASTE));
+			System.out.println("Philosopher " + this.iTID + ": is putting down pepper");
+			DiningPhilosophers.soMonitor.putDownPepper();
 			System.out.println("Philosopher " + this.iTID + ": is done eating");
 			// ...
 		}
