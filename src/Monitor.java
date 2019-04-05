@@ -14,6 +14,7 @@ public class Monitor
 
 	private int sleepingPhilosophers;
 	private int numberOfPhilosophers;
+	private int[] philosophersDining;
 	private boolean chopstickAvailable[];
 	private boolean talking;
 	/**
@@ -23,6 +24,7 @@ public class Monitor
 	{
 		numberOfPhilosophers = piNumberOfPhilosophers;
 		talking = false;
+		philosophersDining = new int[4];
 		chopstickAvailable = new boolean[piNumberOfPhilosophers];
 		for(int i = 0; i<chopstickAvailable.length ; i++)
 		{
@@ -44,7 +46,7 @@ public class Monitor
 	 */
 	public synchronized void pickUp(final int piTID)
 	{
-		while(!canPickup(piTID))
+		while(!canEat(piTID))
 		{
 			try {
 				System.out.println("Philosopher " + piTID + " is waiting to eat");
@@ -57,6 +59,7 @@ public class Monitor
 		
 		chopstickAvailable[getLeftChopStick(piTID)] = false;
 		chopstickAvailable[getRightChopStick(piTID)] = false;
+		notifyAll();
 	}
 
 	/**
@@ -67,6 +70,7 @@ public class Monitor
 	{
 		chopstickAvailable[getLeftChopStick(piTID)] = true;
 		chopstickAvailable[getRightChopStick(piTID)] = true;
+		philosophersDining[piTID-1]++;
 		this.notifyAll();
 	}
 
@@ -122,6 +126,39 @@ public class Monitor
 		notifyAll();
 	}
 	
+	private synchronized boolean canEat(final int piTID)
+	{
+		boolean pickup = canPickup(piTID);
+		if(!pickup)
+		{
+			return false;
+		}
+		
+		int leftPhilosopherId = getLeftPhilosopher(piTID);
+		if(leftPhilosopherId > piTID && philosophersDining[leftPhilosopherId -1] < DiningPhilosophers.DINING_STEPS)
+		{
+			if(canPickup(leftPhilosopherId))
+			{
+				System.out.println("Philosoper " + piTID + " will wait for philosopher " + leftPhilosopherId +
+						" due to his priority");
+				return false;
+			}
+		}
+		
+		int rightPhilosopherId = getRightPhilosopher(piTID);
+		if(rightPhilosopherId > piTID)
+		{
+			if(canPickup(rightPhilosopherId) && philosophersDining[rightPhilosopherId-1] < DiningPhilosophers.DINING_STEPS)
+			{
+				System.out.println("Philosoper " + piTID + " will wait for philosopher " + rightPhilosopherId +
+						" due to his priority");
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	private synchronized boolean canPickup(final int piTID)
 	{
 		return leftChopStickAvailable(piTID) && rightChopStickAvailable(piTID);
@@ -148,6 +185,16 @@ public class Monitor
 	private synchronized int getRightChopStick(final int piTID)
 	{
 		return piTID != numberOfPhilosophers ? piTID : 0;
+	}
+	
+	private synchronized int getLeftPhilosopher(final int piTID)
+	{
+		return piTID != 1 ? numberOfPhilosophers : numberOfPhilosophers-1;		
+	}
+	
+	private synchronized int getRightPhilosopher(final int piTID)
+	{
+		return piTID != numberOfPhilosophers ? piTID+1 : 1;
 	}
 }
 
