@@ -41,12 +41,28 @@ public class DiningPhilosophers
 	{
 		try
 		{
-			/*
-			 * TODO:
-			 * Should be settable from the command line
-			 * or the default if no arguments supplied.
-			 */
 			int iPhilosophers = DEFAULT_NUMBER_OF_PHILOSOPHERS;
+			
+			if(argv.length>0)
+			{
+				try {
+					int numOfPhil = Integer.parseInt(argv[0]);
+					if(numOfPhil>1)
+					{
+						iPhilosophers = numOfPhil;
+					}
+					else
+					{
+						System.out.println("Argument must be above 1!!!!!!");
+						System.exit(1);
+					}
+					
+				} catch (RuntimeException e)
+				{
+					System.out.println("Argument must be a number above 1");
+					System.exit(1);
+				}
+			}
 
 			// Make the monitor aware of how many philosophers there are
 			soMonitor = new Monitor(iPhilosophers);
