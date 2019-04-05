@@ -74,11 +74,16 @@ public class Philosopher extends BaseThread
 	public void talk()
 	{
 		
-			System.out.println("Philosopher " + this.iTID + ": is talking");
-			saySomething();
-			yield();
-			System.out.println("Philosopher " + this.iTID + ": is done talking");
-			// ...
+			
+			try {
+				System.out.println("Philosopher " + this.iTID + ": is talking");
+				saySomething();
+				sleep((long)(Math.random() * TIME_TO_WASTE));
+				System.out.println("Philosopher " + this.iTID + ": is done talking");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		
 	
 	}
@@ -103,10 +108,11 @@ public class Philosopher extends BaseThread
 			 * A decision is made at random whether this particular
 			 * philosopher is about to say something terribly useful.
 			 */
-			if(true == false)
+			if((int)(Math.random() * 10) > 7)
 			{
-				// Some monitor ops down here...
+			    DiningPhilosophers.soMonitor.requestTalk();
 				talk();
+				DiningPhilosophers.soMonitor.endTalk();
 				// ...
 			}
 
