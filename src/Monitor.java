@@ -13,7 +13,7 @@ public class Monitor
 	 */
 
 	private int sleepingPhilosophers;
-	private int numberOfPhilosophers;
+	private volatile int numberOfPhilosophers;
 	private int[] philosophersDining;
 	private boolean chopstickAvailable[];
 	private boolean talking;
@@ -139,7 +139,7 @@ public class Monitor
 		{
 			if(canPickup(leftPhilosopherId))
 			{
-				System.out.println("Philosoper " + piTID + " will wait for philosopher " + leftPhilosopherId +
+				System.out.println("Philosopher " + piTID + " will wait for philosopher " + leftPhilosopherId +
 						" due to his priority");
 				return false;
 			}
@@ -150,7 +150,7 @@ public class Monitor
 		{
 			if(canPickup(rightPhilosopherId) && philosophersDining[rightPhilosopherId-1] < DiningPhilosophers.DINING_STEPS)
 			{
-				System.out.println("Philosoper " + piTID + " will wait for philosopher " + rightPhilosopherId +
+				System.out.println("Philosopher " + piTID + " will wait for philosopher " + rightPhilosopherId +
 						" due to his priority");
 				return false;
 			}
@@ -189,7 +189,7 @@ public class Monitor
 	
 	private synchronized int getLeftPhilosopher(final int piTID)
 	{
-		return piTID != 1 ? numberOfPhilosophers : numberOfPhilosophers-1;		
+		return piTID != 1 ? numberOfPhilosophers : piTID-1;		
 	}
 	
 	private synchronized int getRightPhilosopher(final int piTID)
