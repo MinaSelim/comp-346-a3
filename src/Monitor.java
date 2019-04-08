@@ -12,6 +12,7 @@ public class Monitor
 	 * ------------
 	 */
 
+	private int sleepingPhilosophers;
 	private int numberOfPhilosophers;
 	private boolean chopstickAvailable[];
 	private boolean talking;
@@ -27,6 +28,8 @@ public class Monitor
 		{
 			chopstickAvailable[i] = true;
 		}
+		
+		sleepingPhilosophers = 0;
 	}
 
 	/*
@@ -73,7 +76,7 @@ public class Monitor
 	 */
 	public synchronized void requestTalk()
 	{
-		while(talking)
+		while(!canTalk())
 		{
 			try {
 				wait();
@@ -83,6 +86,30 @@ public class Monitor
 			}
 		}
 		talking = true;
+	}
+	
+	private synchronized boolean canTalk() {
+		return !talking && sleepingPhilosophers == 0;
+	}
+
+	public synchronized void requestSleep()
+	{
+		while(talking)
+		{
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		sleepingPhilosophers++;
+	}
+	
+	public synchronized void wakeUp()
+	{
+		sleepingPhilosophers--;
+		notifyAll();
 	}
 
 	/**

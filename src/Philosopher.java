@@ -115,6 +115,14 @@ public class Philosopher extends BaseThread
 				DiningPhilosophers.soMonitor.endTalk();
 				// ...
 			}
+			
+			if((int)(Math.random() * 10) > 7)
+			{
+			    DiningPhilosophers.soMonitor.requestSleep();
+				PhilSleep();
+				DiningPhilosophers.soMonitor.wakeUp();
+				// ...
+			}
 
 			yield();
 		}
